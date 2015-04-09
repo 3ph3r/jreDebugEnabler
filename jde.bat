@@ -22,8 +22,8 @@ set jreName=%fileName:jdk-=jre%
 set jreName=%jreName:-windows-i586.exe=_x86%
 
 echo Preparing folders
-rmdir tmp /Q /S
-rmdir RESULT /Q /S
+IF EXIST tmp rmdir tmp /Q /S
+IF EXIST RESULT rmdir RESULT /Q /S
 mkdir tmp
 mkdir RESULT
 
