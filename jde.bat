@@ -21,6 +21,9 @@ echo JDK installer found: %fileName%
 set jreName=%fileName:jdk-=jre%
 set jreName=%jreName:-windows-i586.exe=_x86%
 
+set version=%jreName:~3,1%
+if %version% == 8 (set compileFX=1) else (set compileFX=0)
+
 echo Preparing folders
 IF EXIST tmp rmdir tmp /Q /S
 IF EXIST RESULT rmdir RESULT /Q /S
@@ -53,6 +56,30 @@ find tmp\src\ -name *.java > tmp\srcFiles.txt
 echo Extracting JDK
 7z x tmp\tools.zip -otmp\tools >NUL:
 del tmp\tools.zip
+
+if %compileFX%==1 (
+  echo Extracting javafx-src folder
+  mv tmp\tools\javafx-src.zip tmp\javafx-src.zip
+  7z x tmp\javafx-src.zip -otmp\javafx-src >NUL:
+  rmdir tmp\javafx-src\com\sun\glass /Q /S
+  rmdir tmp\javafx-src\com\sun\prism /Q /S
+  rmdir tmp\javafx-src\javafx\embed\swt /Q /S
+  rm tmp\javafx-src\javafx\scene\chart\AreaChartBuilder.java 2>NUL:
+  rm tmp\javafx-src\javafx\scene\chart\BarChartBuilder.java 2>NUL:
+  rm tmp\javafx-src\javafx\scene\chart\BubbleChartBuilder.java 2>NUL:
+  rm tmp\javafx-src\javafx\scene\chart\LineChartBuilder.java 2>NUL:
+  rm tmp\javafx-src\javafx\scene\chart\ScatterChartBuilder.java 2>NUL:
+  rm tmp\javafx-src\javafx\scene\chart\StackedAreaChartBuilder.java 2>NUL:
+  rm tmp\javafx-src\javafx\scene\chart\StackedBarChartBuilder.java 2>NUL:
+  rm tmp\javafx-src\javafx\scene\control\TableCellBuilder.java 2>NUL:
+  rm tmp\javafx-src\javafx\scene\control\cell\CheckBoxTableCellBuilder.java 2>NUL:
+  rm tmp\javafx-src\javafx\scene\control\cell\ChoiceBoxTableCellBuilder.java 2>NUL:
+  rm tmp\javafx-src\javafx\scene\control\cell\ComboBoxTableCellBuilder.java 2>NUL:
+  rm tmp\javafx-src\javafx\scene\control\cell\TextFieldTableCellBuilder.java 2>NUL:
+
+  echo Listing files
+  find tmp\javafx-src\ -name *.java > tmp\srcFilesFX.txt
+)
 
 echo Extracting tools.jar
 tmp\tools\bin\unpack200 -r tmp\tools\lib\tools.pack "tmp\tools\lib\tools.jar"
@@ -87,10 +114,39 @@ copy /y tmp\tools\jre\lib\_rt\rt.jar tmp\tools\jre\lib\rt.jar >NUL:
 echo Deleting compiled classes
 rmdir tmp\tools\jre\lib\_rt /Q /S
 
+if %compileFX%==1 (
+  echo Compiling jfxrt.jar
+  mkdir tmp\builtFromSourceFX
+  tmp\tools\bin\javac -g -d tmp\builtFromSourceFX -J-Xmx512m -cp tmp\tools\jre\lib\rt.jar;tmp\tools\lib\tools.jar;tmp\tools\lib\ext\jfxrt.jar;jre8deps.jar @tmp\srcFilesFX.txt 2>NUL:
+
+  echo Extracting jfxrt.jar
+  7z x tmp\tools\jre\lib\ext\jfxrt.jar -otmp\tools\jre\lib\ext\_jfxrt >NUL:
+
+  echo Moving jfxrt.jar classes
+  for /r tmp\builtFromSourceFX %%a in (*.class) do (
+    SET buildPathFX=%%a
+    SET jfxrtPath=!buildPathFX:builtFromSourceFX=tools\jre\lib\ext\_jfxrt!
+    
+    if exist "!jfxrtPath!" copy /y "!buildPathFX!" "!jfxrtPath!" >NUL:
+  )
+
+  echo Creating jfxrt.jar
+  cd tmp\tools\jre\lib\ext\_jfxrt
+  7z a -mx0 -tzip jfxrt.jar >NUL:
+  cd ..\..\..\..\..\..\
+
+  echo Moving jfxrt.jar
+  copy /y tmp\tools\jre\lib\ext\_jfxrt\jfxrt.jar tmp\tools\jre\lib\ext\jfxrt.jar >NUL:
+
+  echo Deleting compiled classes
+  rmdir tmp\tools\jre\lib\ext\_jfxrt /Q /S
+)
+
 echo Finalizing
 mkdir RESULT\%jreName%
 move tmp\tools\jre RESULT\%jreName%\ >NUL:
 move tmp\src.zip RESULT\%jreName%\ >NUL:
+if %compileFX%==1 move tmp\javafx-src.zip RESULT\%jreName%\ >NUL:
 
 echo Cleaning up tmp folder
 rmdir tmp /Q /S

@@ -36,5 +36,4 @@ After few minutes finished JRE will be ready in ```RESULT``` folder.
 What's missing?
 ---
 - [ ] 64bit JDK support - apart from different installer name there is slight difference in installer's content
-- [ ] full Java 8 support - JavaFX sources are distributed in separate file ```javafx-src.zip``` which is not currently included in compiling procedure
 - [ ] old Java support - current release will work with jdk-6u10 and newer; older installers have different inner structure
