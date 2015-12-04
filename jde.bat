@@ -51,7 +51,7 @@ echo Extracting src folder
 rmdir tmp\src\com\sun\java\swing\plaf /Q /S
 
 echo Listing files
-find tmp\src\ -name *.java > tmp\srcFiles.txt
+dir /s /B tmp\src\*.java > tmp\srcFiles.txt
 
 echo Extracting JDK
 7z x tmp\tools.zip -otmp\tools >NUL:
@@ -78,7 +78,7 @@ if %compileFX%==1 (
   rm tmp\javafx-src\javafx\scene\control\cell\TextFieldTableCellBuilder.java 2>NUL:
 
   echo Listing files
-  find tmp\javafx-src\ -name *.java > tmp\srcFilesFX.txt
+  dir /s /B tmp\javafx-src\*.java > tmp\srcFilesFX.txt
 )
 
 echo Extracting tools.jar

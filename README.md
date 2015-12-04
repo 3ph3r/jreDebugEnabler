@@ -6,7 +6,6 @@ What you need?
 ---
 Script requires following utils in ```PATH``` variable:
 * [7z](http://www.7-zip.org/)
-* [find](https://www.cygwin.com/) - not to confuse with Windows built-in ```find``` command
 * [ResourcesExtract](http://www.nirsoft.net/utils/resources_extract.html)
 
 To create JRE with all debugging information you will also need official JDK installer (available [here](http://www.oracle.com/technetwork/java/javase/downloads/index.html)).
