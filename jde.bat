@@ -148,9 +148,8 @@ move tmp\tools\jre RESULT\%jreName%\ >NUL:
 move tmp\src.zip RESULT\%jreName%\ >NUL:
 if %compileFX%==1 move tmp\javafx-src.zip RESULT\%jreName%\ >NUL:
 
-echo Cleaning up tmp folder
+echo Cleaning up
 rmdir tmp /Q /S
-mkdir tmp
 
 echo.
 echo Success^^!
