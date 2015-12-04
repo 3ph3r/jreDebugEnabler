@@ -4,9 +4,10 @@ Official JRE distribution comes compiled without debugging information. This scr
 
 What you need?
 ---
-Script requires following utils in ```PATH``` variable:
+Script requires following utils in ```PATH``` variable (or in project root folder):
 * [7z](http://www.7-zip.org/)
 * [ResourcesExtract](http://www.nirsoft.net/utils/resources_extract.html)
+* [jre8deps.jar](https://github.com/3ph3r/jre8deps) - only to build JRE 8
 
 To create JRE with all debugging information you will also need official JDK installer (available [here](http://www.oracle.com/technetwork/java/javase/downloads/index.html)).
 
